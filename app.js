@@ -71,6 +71,15 @@ app.put('/campgrounds/:id', async (req, res) => {
     res.redirect(`/campgrounds/${campground._id}`);
 })
 
+app.delete('/campgrounds/:id', async (req, res) => {
+    // destructure id from request parameters
+    const {id} = req.params;
+    // find and delete campground from db
+    await Campground.findByIdAndDelete(id);
+    // redirect to campgrounds index page
+    res.redirect('/campgrounds');
+})
+
 // open connection at localhost:3000
 app.listen(3000, ()=> {
     console.log('Serving on port 3000');
