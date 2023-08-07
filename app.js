@@ -19,6 +19,9 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// url encoding for parsing res.body
+app.use(express.urlencoded({extended: true}));
+
 // root route
 app.get('/', (req, res) =>{
     res.render('home');
@@ -30,19 +33,23 @@ app.get('/campgrounds', async (req, res) =>{
     res.render('campgrounds/index', { campgrounds });
 })
 
+// page for creating new campgrounds
+app.get('/campgrounds/new', (req, res) => {
+    res.render('campgrounds/new');
+})
+
+app.post('/campgrounds', async (req, res) => {
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+})
+
 // route for individual campgrounds
 app.get('/campgrounds/:id', async (req, res) => {
     // get campground by database id
     const campground = await Campground.findById(req.params.id);
     // route to show view and pass in campground obj
     res.render('campgrounds/show', { campground });
-})
-
-// DEBUGGING - create a campground
-app.get('/makecampground', async (req, res) =>{
-    const camp = new Campground({title: 'My Backyard', description: 'Cheap camping'});
-    await camp.save();
-    res.send(camp);
 })
 
 // open connection at localhost:3000
