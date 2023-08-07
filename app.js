@@ -24,6 +24,20 @@ app.get('/', (req, res) =>{
     res.render('home');
 })
 
+// route to show index of campgrounds
+app.get('/campgrounds', async (req, res) =>{
+    const campgrounds = await Campground.find({});
+    res.render('campgrounds/index', { campgrounds });
+})
+
+// route for individual campgrounds
+app.get('/campgrounds/:id', async (req, res) => {
+    // get campground by database id
+    const campground = await Campground.findById(req.params.id);
+    // route to show view and pass in campground obj
+    res.render('campgrounds/show', { campground });
+})
+
 // DEBUGGING - create a campground
 app.get('/makecampground', async (req, res) =>{
     const camp = new Campground({title: 'My Backyard', description: 'Cheap camping'});

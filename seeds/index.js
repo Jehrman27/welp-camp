@@ -42,3 +42,6 @@ seedDB()
     .then(() =>{
         mongoose.connection.close();
     })
+    .catch((err) => {
+        console.log(err);
+    });
