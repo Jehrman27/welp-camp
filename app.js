@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const ejsMate = require('ejs-mate');
 const Campground = require('./models/campground');
 const methodOverride = require('method-override');
 
@@ -16,9 +17,10 @@ db.once('open', () =>{
 // connect express
 const app = express(); 
 
-// setup ejs and views folder
+// setup ejs, views folder, and ejs-mate as engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.engine('ejs', ejsMate);
 
 // url encoding for parsing res.body and setup method override to change POSTs
 app.use(express.urlencoded({extended: true}));
