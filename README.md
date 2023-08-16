@@ -1,14 +1,18 @@
-This project is for a website that users can use to add their own campgrounds
-or search for other campgrounds and review their experiences.
+This project is for a website that users can use to share campgrounds and reviews of their experiences
 
 The project makes use of HTML, CSS, Bootstrap5, JavaScript, Node.js, MongoDB, and Mongoose.
 More technologies will likely be used as the project progresses.
 
 To install and host a local version of the website:
-- Clone this repo
-- Run 'npm install' in the root directory of the repo
-- Run 'node app.js' in the root directory to serve the site locally
-- Open your web browser to localhost:3000
-
---Note: Currently only the campgrounds are available, so you should navigate to localhost:3000/campgrounds
-to see the progress of the project
+1 Clone this repo
+2 Install npm & node (use nvm or nvm-windows)
+  - nvm for Linux/macOS users:        https://github.com/nvm-sh/nvm#installing-and-updating (installation)
+                                      https://github.com/nvm-sh/nvm#usage                   (usage)
+  - nvm-windows for Windows users:    https://github.com/coreybutler/nvm-windows/releases   (installation)
+                                      https://github.com/coreybutler/nvm-windows            (usage)
+  - node for all users:               https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+3 Run 'npm install' in the root directory of the repo
+    - This installs all of the dependencies to run the server
+    - See package.json in this repo for a list of modules that will be installed
+4 Run 'node app.js' in the root directory to serve the site locally
+5 Open your web browser to localhost:3000/campgrounds to view current state of the website
