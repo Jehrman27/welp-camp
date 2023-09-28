@@ -5,7 +5,7 @@ const Campground = require('../models/campground');
 const Review = require('../models/review');
 
 const catchAsync = require('../utils/catchAsync');
-const ExpressError = require('../utils/ExpressError')
+const ExpressError = require('../utils/ExpressError');
 
 const { reviewSchema } = require('../schemas.js');
 
@@ -17,7 +17,7 @@ const validateReview = (req, res, next) => {
 
     // throw errors, otherwise go to next middleware
     if(error){
-        const msg = error.details.map(el => el.message).join(',')
+        const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400);
     } else {
         next();
@@ -40,6 +40,8 @@ router.post('/', validateReview, catchAsync(async (req, res) =>{
     await review.save();
     await campground.save();
 
+    // flash success msg
+    req.flash('success', 'Successfully created new review.');
     // redirect to the same campground
     res.redirect(`/campgrounds/${campground._id}`);
 }));
@@ -47,9 +49,16 @@ router.post('/', validateReview, catchAsync(async (req, res) =>{
 // route for deleting individual reviews from a campground
 router.delete('/:reviewId', catchAsync( async (req, res) => {
     const { id, reviewId } = req.params;
-    await Campground.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})
+    // get campground and delete review objId from it
+    await Campground.findByIdAndUpdate(id, {$pull: {reviews: reviewId}});
+    // get review and delete it
     await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/campgrounds/${id}`)
+
+    // flash success msg
+    req.flash('success', 'Successfully deleted review.');
+
+    // redirect to campground
+    res.redirect(`/campgrounds/${id}`);
 }))
 
 module.exports = router;
