@@ -11,8 +11,6 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 
-
-
 // require routers
 const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
@@ -66,12 +64,6 @@ app.use((req, res, next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
-})
-
-app.get('/fakeuser', async (req, res) => {
-    const user = new User({email: 'abc@mail.com', username: 'abc'});
-    const newUser = await User.register(user, '123');
-    res.send(newUser);
 })
 
 // use routers
