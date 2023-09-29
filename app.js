@@ -62,6 +62,7 @@ passport.deserializeUser(User.deserializeUser());
 
 // middleware to capture and save and flash messages to locals
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
