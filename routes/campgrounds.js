@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
 const { campgroundSchema } = require('../schemas.js');
+const {isLoggedIn} = require('../middleware.js');
 const ExpressError = require('../utils/ExpressError');
 const Campground = require('../models/campground');
 const { model } = require('mongoose');
@@ -26,12 +27,12 @@ router.get('/', catchAsync(async (req, res) =>{
 }));
 
 // page for creating new campgrounds
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
     res.render('campgrounds/new');
 });
 
 // route for making a new campground
-router.post('/', validateCampground, catchAsync(async (req, res, next) => {
+router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
     
     // catch if campground data is incomplete
     //if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
@@ -60,7 +61,7 @@ router.get('/:id', catchAsync(async (req, res) => {
 }));
 
 // page for editing existing campgrounds
-router.get('/:id/edit', catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
     // get campground by database id
     const campground = await Campground.findById(req.params.id);
 
@@ -75,7 +76,7 @@ router.get('/:id/edit', catchAsync(async (req, res) => {
 }));
 
 // route for updating a campground
-router.put('/:id', validateCampground, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res) => {
     // destructure id from request parameters
     const {id} = req.params;
 
@@ -90,7 +91,7 @@ router.put('/:id', validateCampground, catchAsync(async (req, res) => {
 }));
 
 // route for deleting campgrounds
-router.delete('/:id', catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
     // destructure id from request parameters
     const {id} = req.params;
 
