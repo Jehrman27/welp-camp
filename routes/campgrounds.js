@@ -1,24 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { campgroundSchema } = require('../schemas.js');
-const {isLoggedIn} = require('../middleware.js');
-const ExpressError = require('../utils/ExpressError');
+
+const {isLoggedIn, isAuthor, validateCampground} = require('../middleware.js');
+
 const Campground = require('../models/campground');
-const { model } = require('mongoose');
-
-const validateCampground = (req, res, next) => {
-    // validation campground data against schema and grab any errors
-    const {error} = campgroundSchema.validate(req.body);
-
-    // throw errors, otherwise go to next middleware
-    if(error){
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-}
 
 // route to show index of campgrounds
 router.get('/', catchAsync(async (req, res) =>{
@@ -64,9 +50,12 @@ router.get('/:id', catchAsync(async (req, res) => {
 }));
 
 // page for editing existing campgrounds
-router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
+    // destructure id from request parameters
+    const {id} = req.params;
+
     // get campground by database id
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(id);
 
     // flash error and redirect to index if campground found
     if(!campground){
@@ -79,7 +68,7 @@ router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
 }));
 
 // route for updating a campground
-router.put('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, isAuthor, validateCampground, catchAsync(async (req, res) => {
     // destructure id from request parameters
     const {id} = req.params;
 
@@ -94,9 +83,16 @@ router.put('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res) =
 }));
 
 // route for deleting campgrounds
-router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
     // destructure id from request parameters
     const {id} = req.params;
+
+    // find campground and check if authro matches logged in user
+    const campground = await Campground.findById(id);
+    if(!campground.author.equals(req.user.id)){
+        req.flash('error', 'You do not have permission to do that');
+        return res.redirect(`/campgrounds/${id}`)
+    }
 
     // find and delete campground from db
     await Campground.findByIdAndDelete(id);

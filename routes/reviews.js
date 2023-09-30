@@ -5,25 +5,8 @@ const Campground = require('../models/campground');
 const Review = require('../models/review');
 
 const catchAsync = require('../utils/catchAsync');
-const ExpressError = require('../utils/ExpressError');
 
-const { reviewSchema } = require('../schemas.js');
-
-
-
-const validateReview = (req, res, next) => {
-    // validation review data against schema and grab any errors
-    const { error } = reviewSchema.validate(req.body);
-
-    // throw errors, otherwise go to next middleware
-    if(error){
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-}
-
+const {validateReview} = require('../middleware.js');
 
 // route for creating a new review on a specified campground
 router.post('/', validateReview, catchAsync(async (req, res) =>{
