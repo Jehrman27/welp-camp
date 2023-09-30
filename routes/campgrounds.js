@@ -38,8 +38,17 @@ router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, nex
 // route for individual campgrounds
 router.get('/:id', catchAsync(async (req, res) => {
     // get campground by database id and populate reviews data
-    const campground = await Campground.findById(req.params.id).populate('reviews').populate('author');
-    console.log(campground);
+    const campground = await Campground.findById(req.params.id)
+    .populate({
+        // populate reviews
+        path: 'reviews',
+        populate: {
+            // populate authors for each reviews
+            path:'author'
+        }
+    })
+    // populate author for each campground
+    .populate('author');
     // flash error and redirect to index if campground found
     if(!campground){
         req.flash('error', 'Campground not found');
