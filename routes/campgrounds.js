@@ -40,6 +40,9 @@ router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, nex
     // grab campground data from request body
     const campground = new Campground(req.body.campground);
 
+    // add user data to campground
+    campground.author = req.user._id;
+
     // save campground data to db and then redirect to page for that campground
     await campground.save();
     req.flash('success', 'Successfully made a new campground.');
@@ -49,8 +52,8 @@ router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, nex
 // route for individual campgrounds
 router.get('/:id', catchAsync(async (req, res) => {
     // get campground by database id and populate reviews data
-    const campground = await Campground.findById(req.params.id).populate('reviews');
-
+    const campground = await Campground.findById(req.params.id).populate('reviews').populate('author');
+    console.log(campground);
     // flash error and redirect to index if campground found
     if(!campground){
         req.flash('error', 'Campground not found');
